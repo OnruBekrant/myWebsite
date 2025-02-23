@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benim Web Sitem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #444;
+        }
+        .photo {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .photo img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            text-align: center;
+            font-size: 1.1em;
+        }
+        .notes {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #5cb85c;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        @media (max-width: 600px) {
+            .container {
+            padding: 10px;
+            }
+            button {
+            width: 100%;
+            margin-bottom: 10px;
+            }
+            button:last-child {
+            margin-right: 0;
+            }
+        }
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        </style>
+    </head>
+    <body>
+        <nav>
+        <a href="#home">Ana Sayfa</a>
+        <a href="#notes">Notlar</a>
+        </nav>
+        <div class="container" id="home">
+            <h1>Hoşgeldiniz</h1>
+            <div class="photo">
+                <img src="your-photo.jpg" alt="">
+            </div>
+            <p>Merhaba, ben Onru. Bu benim kişisel web sitem.</p>
+        </div>
+
+        <div class="container" id="notes">
+            <h2>Notlar</h2>
+            <input type="text" id="noteInput" placeholder="Notunuzu girin">
+            <button onclick="addNote()">Ekle</button>
+            <button onclick="deleteNote()">Sil</button>
+            <table id="notesTable">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Sıra</th>
+                        <th>Notlar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            loadNotes();
+        });
+
+        function addNote() {
+            var input = document.getElementById("noteInput");
+            var note = input.value;
+            if (note) {
+                var table = document.getElementById("notesTable").getElementsByTagName('tbody')[0];
+                var newRow = table.insertRow();
+                var cell1 = newRow.insertCell(0);
+                var cell2 = newRow.insertCell(1);
+                cell1.textContent = table.rows.length;
+                cell2.textContent = note;
+                input.value = "";
+                saveNotes();
+            }
+        }
+
+        function deleteNote() {
+            var table = document.getElementById("notesTable").getElementsByTagName('tbody')[0];
+            if (table.rows.length > 0) {
+                table.deleteRow(0);
+                // Update the sequence numbers
+                for (var i = 0; i < table.rows.length; i++) {
+                    table.rows[i].cells[0].textContent = i + 1;
+                }
+                saveNotes();
+            }
+        }
+
+        function saveNotes() {
+            var table = document.getElementById("notesTable").getElementsByTagName('tbody')[0];
+            var notes = [];
+            for (var i = 0; i < table.rows.length; i++) {
+                notes.push(table.rows[i].cells[1].textContent);
+            }
+            localStorage.setItem("notes", JSON.stringify(notes));
+        }
+
+        function loadNotes() {
+            var notes = JSON.parse(localStorage.getItem("notes"));
+            if (notes) {
+                var table = document.getElementById("notesTable").getElementsByTagName('tbody')[0];
+                for (var i = 0; i < notes.length; i++) {
+                    var newRow = table.insertRow();
+                    var cell1 = newRow.insertCell(0);
+                    var cell2 = newRow.insertCell(1);
+                    cell1.textContent = i + 1;
+                    cell2.textContent = notes[i];
+                }
+            }
+        }
+
+        document.getElementById("noteInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addNote();
+            }
+        });
+        </script>
+    </body>
+    </html>
